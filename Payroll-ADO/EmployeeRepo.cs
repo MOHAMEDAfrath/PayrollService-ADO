@@ -10,11 +10,11 @@ namespace Payroll_ADO
     public class EmployeeRepo
     {
         //connection string contains the database URI
-        public static string connectionString = @"Server=.;Database=payroll_service;Trusted_Connection=True";
+        public static string connectionString = @"Server=.;Database=payroll_service;Trusted_Connection=True;";
         SqlConnection sqlConnection = new SqlConnection(connectionString);
         public void GetAllEmployee()
         {
-           
+
             try
             {
                 //Employee Model object 
@@ -23,9 +23,9 @@ namespace Payroll_ADO
                 {
                     //query execution
                     string query = @"Select * from employee_payroll";
-                    SqlCommand command = new SqlCommand(query,this.sqlConnection);
+                    SqlCommand command = new SqlCommand(query, this.sqlConnection);
                     //open sql connection
-                    this.sqlConnection.Open();
+                    sqlConnection.Open();
                     //sql reader to read data from db
                     SqlDataReader sqlDataReader = command.ExecuteReader();
                     if (sqlDataReader.HasRows)
@@ -44,23 +44,58 @@ namespace Payroll_ADO
                             employeeModel.TaxablePay = sqlDataReader.GetDouble(9);
                             employeeModel.Tax = sqlDataReader.GetDouble(10);
                             employeeModel.NetPay = sqlDataReader.GetDouble(11);
-                            Console.WriteLine("{0}      {1}       {2}       {3}       {4}       {5}       {6}       {7}     {8}     {9}    {10}    {11}", employeeModel.EmployeeId, employeeModel.EmployeeName, employeeModel.BasePay, employeeModel.startDate,employeeModel.Gender,employeeModel.PhoneNumber,employeeModel.EmployeeDepartment,employeeModel.Address,employeeModel.Deductions,employeeModel.TaxablePay,employeeModel.Tax,employeeModel.NetPay);
+                            Console.WriteLine("{0}      {1}       {2}       {3}       {4}       {5}       {6}       {7}     {8}     {9}    {10}    {11}", employeeModel.EmployeeId, employeeModel.EmployeeName, employeeModel.BasePay, employeeModel.startDate, employeeModel.Gender, employeeModel.PhoneNumber, employeeModel.EmployeeDepartment, employeeModel.Address, employeeModel.Deductions, employeeModel.TaxablePay, employeeModel.Tax, employeeModel.NetPay);
                         }
-                      
+
                     }
                     //close reader
                     sqlDataReader.Close();
                 }
-                
-            }catch(Exception ex)
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+
+                sqlConnection.Close();
+            }
+        }
+        public string UpdateEmployee(EmployeeModel employeeModel)
+        {
+            string change = "Not success";
+            try
+            {
+                using (sqlConnection)
+                {
+                    //Open command with spUpdateEmployeeDetails 
+                    string query = @"update employee_payroll set BasicPay = '300000' where EmployeeId = '3' and EmployeeName = 'Priya'";
+                    SqlCommand command = new SqlCommand(query, this.sqlConnection);
+                    //open connection
+                    sqlConnection.Open();
+                    //executes the query and returns the no of rows the changes are reflected
+                    int result = command.ExecuteNonQuery();
+                    if (result != 0)
+                        change = "success";
+                   
+                }
+
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
             finally
             {
                 //closes the connection
-                this.sqlConnection.Close();
+                sqlConnection.Close();
+            
             }
+            return change;
+
+
         }
 
     }
