@@ -8,20 +8,18 @@ namespace ADOTestProject
     public class UnitTest1
     {
         EmployeeRepo employeeRepo;
+        EntityRelationshipTable entityRelationshipTable;
         [TestInitialize]
         public void SetUp() 
         {
-            employeeRepo = new EmployeeRepo();   
+            employeeRepo = new EmployeeRepo();
+            entityRelationshipTable = new EntityRelationshipTable();
         }
         //TC for updation using query
         [TestMethod]
         public void TestMethodForUpdateUsingQuery()
         {
-            EmployeeModel model = new EmployeeModel();
-            model.EmployeeName = "Priya";
-            model.EmployeeId = 3;
-            model.BasePay = 300000;
-           string actual = employeeRepo.UpdateEmployee(model);
+           string actual = employeeRepo.UpdateEmployee();
             string expected = "success";
             Assert.AreEqual(expected, actual);
         }
@@ -79,5 +77,55 @@ namespace ADOTestProject
             string actual = employeeRepo.PerformAggregateFunctions(model);
             Assert.AreEqual(expected, actual);
         }
+        //the below test cases checks the table after normalization
+        //checks the retrieval using join
+        [TestMethod]
+        public void TestMethodForCheckingPayrollList()
+        {
+            int expected = 5;
+            int actual = entityRelationshipTable.GetEmployeeDetails();
+            Assert.AreEqual(expected, actual);
+        }
+        //updates using join query
+        [TestMethod]
+        public void TestMethodToCheckUpdateFunctions_AfterER()
+        {
+            int actual = entityRelationshipTable.UpdateUsingQuery();
+            int expected = 1;
+            Assert.AreEqual(expected, actual);
+
+        }
+        //updates using join query in stored procedure
+        [TestMethod]
+        public void TestMethodToCheckUpdateFunctionsUsingProcedure_AfterER()
+        {
+            EREmployeeModel model = new EREmployeeModel();
+            model.EmployeeName = "Priya";
+            model.EmployeeId = 3;
+            model.BasePay = 300000;
+            int actual = entityRelationshipTable.UpdateUsingProcedure(model);
+            int expected = 1;
+            Assert.AreEqual(expected, actual);
+        }
+        //retrieve data betwwen joining date and current 
+        [TestMethod]
+        public void TestMethodToRetrieveDataBetweenRange_AfterER()
+        {
+            int actual = entityRelationshipTable.DataBasedOnDateRange();
+            int expected = 3;
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void TestMethodAggregateFunctionsAfterER()
+        {
+            string expected = "M 2300500 650000 950500 766833 3";
+            EREmployeeModel model = new EREmployeeModel();
+            model.Gender = "M";
+            string actual = entityRelationshipTable.PerformAggregateFunctions(model);
+            Assert.AreEqual(expected, actual);
+
+        }
+
+
     }
 }

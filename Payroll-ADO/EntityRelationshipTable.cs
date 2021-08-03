@@ -7,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace Payroll_ADO
 {
-    public class EmployeeRepo
+    public class EntityRelationshipTable
     {
-        //connection string contains the database URI
         public static string connectionString = @"Server=.;Database=payroll_service;Trusted_Connection=True;";
         SqlConnection sqlConnection = new SqlConnection(connectionString);
-        public void GetAllEmployee()
+        public int GetEmployeeDetails()
         {
+            List<EREmployeeModel> employeepayroll = new List<EREmployeeModel>();
+            EREmployeeModel eREmployeeModel = new EREmployeeModel();
 
             try
             {
                 //Employee Model object 
-               
                 using (sqlConnection)
                 {
                     //query execution
-                    string query = @"Select * from employee_payroll";
+                    string query = @"select company.company_Id ,company.company_name,EmployeeId,EmployeeName,Gender,EmployeePhoneNumber,EmployeeAddress,StartDate,payroll.BasicPay,TaxablePay,IncomeTax,Deductions,NetPay,department_table.DeptName from Employee inner join company on company.company_Id = Employee.CompanyId inner join payroll on payroll.EmpId = Employee.EmployeeId inner join emp_Dept on Employee.EmployeeId = emp_Dept.EmpId inner join department_table on department_table.DeptId = emp_Dept.DeptId";
                     SqlCommand command = new SqlCommand(query, this.sqlConnection);
                     //open sql connection
                     sqlConnection.Open();
@@ -32,7 +32,8 @@ namespace Payroll_ADO
                     {
                         while (sqlDataReader.Read())
                         {
-                            GetDetail(sqlDataReader);
+                            eREmployeeModel = GetDetail(sqlDataReader);
+                            employeepayroll.Add(eREmployeeModel);
                         }
 
                     }
@@ -50,24 +51,48 @@ namespace Payroll_ADO
 
                 sqlConnection.Close();
             }
+            return employeepayroll.Count;
         }
-        public string UpdateEmployee()
+        public EREmployeeModel GetDetail(SqlDataReader sqlDataReader)
         {
-            string change = "Not success";
+
+            EREmployeeModel eREmployeeModel = new EREmployeeModel();
+            eREmployeeModel.CompanyId = Convert.ToInt32(sqlDataReader["company_Id"]);
+            eREmployeeModel.CompanyName = Convert.ToString(sqlDataReader["company_name"]);
+            eREmployeeModel.EmployeeId = Convert.ToInt32(sqlDataReader["EmployeeId"]);
+            eREmployeeModel.EmployeeName = Convert.ToString(sqlDataReader["EmployeeName"]);
+            eREmployeeModel.Gender = Convert.ToString(sqlDataReader["Gender"]);
+            eREmployeeModel.PhoneNumber = Convert.ToString(sqlDataReader["EmployeePhoneNumber"]);
+            eREmployeeModel.Address = Convert.ToString(sqlDataReader["EmployeeAddress"]);
+            eREmployeeModel.startDate = sqlDataReader.GetDateTime(7);
+            eREmployeeModel.BasePay = Convert.ToDouble(sqlDataReader["BasicPay"]);
+            eREmployeeModel.TaxablePay = Convert.ToDouble(sqlDataReader["TaxablePay"]);
+            eREmployeeModel.Tax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
+            eREmployeeModel.Deductions = Convert.ToDouble(sqlDataReader["Deductions"]);
+            eREmployeeModel.NetPay = Convert.ToDouble(sqlDataReader["NetPay"]);
+            eREmployeeModel.DepartmentName = Convert.ToString(sqlDataReader["DeptName"]);
+            Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13}",eREmployeeModel.CompanyId,eREmployeeModel.CompanyName,eREmployeeModel.EmployeeId,eREmployeeModel.EmployeeName,eREmployeeModel.Gender,eREmployeeModel.PhoneNumber,eREmployeeModel.Address,eREmployeeModel.startDate,eREmployeeModel.BasePay,eREmployeeModel.TaxablePay,eREmployeeModel.Tax,eREmployeeModel.Deductions,eREmployeeModel.NetPay,eREmployeeModel.DepartmentName);
+
+            return eREmployeeModel;
+            
+        }
+        public int UpdateUsingQuery()
+        { 
+            int change = 0;
             try
             {
                 using (sqlConnection)
                 {
                     //Open command with spUpdateEmployeeDetails 
-                    string query = @"update employee_payroll set BasicPay = '300000' where EmployeeId = '3' and EmployeeName = 'Priya'";
+                    string query = @"update payroll set BasicPay = '300000' from payroll inner join Employee on payroll.EmpId = Employee.EmployeeId where Employee.EmployeeName = 'Priya'";
                     SqlCommand command = new SqlCommand(query, this.sqlConnection);
                     //open connection
                     sqlConnection.Open();
                     //executes the query and returns the no of rows the changes are reflected
                     int result = command.ExecuteNonQuery();
                     if (result != 0)
-                        change = "success";
-                   
+                        change = 1;
+
                 }
 
             }
@@ -79,39 +104,20 @@ namespace Payroll_ADO
             {
                 //closes the connection
                 sqlConnection.Close();
-            
+
             }
             return change;
 
-
         }
-        public EmployeeModel GetDetail(SqlDataReader sqlDataReader)
+        public int UpdateUsingProcedure(EREmployeeModel employeeModel)
         {
-            EmployeeModel employeeModel = new EmployeeModel();
-            employeeModel.EmployeeId = sqlDataReader.GetInt32(0);
-            employeeModel.EmployeeName = sqlDataReader.GetString(1);
-            employeeModel.BasePay = sqlDataReader.GetDouble(2);
-            employeeModel.startDate = sqlDataReader.GetDateTime(3);
-            employeeModel.Gender = sqlDataReader.GetString(4);
-            employeeModel.PhoneNumber = Convert.ToString(sqlDataReader.GetInt64(5));
-            employeeModel.EmployeeDepartment = sqlDataReader.GetString(6);
-            employeeModel.Address = sqlDataReader.GetString(7);
-            employeeModel.Deductions = sqlDataReader.GetDouble(8);
-            employeeModel.TaxablePay = sqlDataReader.GetDouble(9);
-            employeeModel.Tax = sqlDataReader.GetDouble(10);
-            employeeModel.NetPay = sqlDataReader.GetDouble(11);
-            Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}", employeeModel.EmployeeId, employeeModel.EmployeeName, employeeModel.BasePay, employeeModel.startDate, employeeModel.Gender, employeeModel.PhoneNumber, employeeModel.EmployeeDepartment, employeeModel.Address, employeeModel.Deductions, employeeModel.TaxablePay, employeeModel.Tax, employeeModel.NetPay);
-            return employeeModel;
-        }
-        public string UpdateEmployeeUsingStoredProcedure(EmployeeModel employeeModel)
-        {
-            string change = "Unsuccessful";
+            int change = 0;
             try
             {
                 using (sqlConnection)
                 {
                     //spUdpateEmployeeDetails is stored procedure
-                    SqlCommand sqlCommand = new SqlCommand("spUdpateEmployeeDetails", this.sqlConnection);
+                    SqlCommand sqlCommand = new SqlCommand("spUdpateEmployeeDetailsAfterER", this.sqlConnection);
                     //setting command type as stored procedure
                     sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
                     //sending params 
@@ -122,7 +128,7 @@ namespace Payroll_ADO
                     //returns the number of rows updated
                     int result = sqlCommand.ExecuteNonQuery();
                     if (result != 0)
-                        change = "Updated";
+                        change = 1;
 
                     //close reader
                 }
@@ -140,59 +146,18 @@ namespace Payroll_ADO
             }
             return change;
         }
-        public EmployeeModel RetrieveDataBasedOnName(EmployeeModel employeeModel)
-        {
-            try
-            {
-                using (this.sqlConnection)
-                {
-                    //spRetrieveDataBasedOnName is the stored procedure
-                    SqlCommand sqlCommand = new SqlCommand("spRetrieveDataBasedOnName",this.sqlConnection);
-                    sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
-                    //Sends params to procedure
-                    sqlCommand.Parameters.AddWithValue("@name", employeeModel.EmployeeName);
-                    sqlConnection.Open();
-                    SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-                    if (sqlDataReader.HasRows)
-                    {
-                        while (sqlDataReader.Read())
-                        {
-                            employeeModel = GetDetail(sqlDataReader);
-                        }
-                    }
-                    else
-                    {
-                        //if no result present
-                        return null;
-                    }
-                    
-                }
-            }
-            //catch 
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                sqlConnection.Close();
-            }
-
-            return employeeModel;
-        }
-        //finds the employees in a given range from start date to current
         public int DataBasedOnDateRange()
         {
-            List<EmployeeModel> employees = new List<EmployeeModel>();
+            List<EREmployeeModel> employees = new List<EREmployeeModel>();
             try
             {
                 //Employee Model object 
-                EmployeeModel employeeModel = new EmployeeModel();
-                
+                EREmployeeModel employeeModel = new EREmployeeModel();
+
                 using (sqlConnection)
                 {
                     //query execution
-                    string query = @"select * from employee_payroll where StartDate BETWEEN Cast('2019-01-01' as Date) and GetDate();";
+                    string query = @"select Employee.EmployeeId,Employee.EmployeeName,payroll.BasicPay from payroll inner join Employee on Employee.EmployeeId = payroll.EmpId where Employee.StartDate between Cast('2019-01-01' as Date) and GETDATE();";
                     SqlCommand command = new SqlCommand(query, this.sqlConnection);
                     //open sql connection
                     sqlConnection.Open();
@@ -202,7 +167,9 @@ namespace Payroll_ADO
                     {
                         while (sqlDataReader.Read())
                         {
-                            employeeModel = GetDetail(sqlDataReader);
+                            employeeModel.EmployeeId = Convert.ToInt32(sqlDataReader["EmployeeId"]);
+                            employeeModel.EmployeeName = Convert.ToString(sqlDataReader["EmployeeName"]);
+                            employeeModel.BasePay = Convert.ToDouble(sqlDataReader["BasicPay"]);
                             employees.Add(employeeModel);
 
                         }
@@ -226,12 +193,12 @@ namespace Payroll_ADO
             return employees.Count;
 
         }
-        public string PerformAggregateFunctions(EmployeeModel employeeModel)
+        public string PerformAggregateFunctions(EREmployeeModel employeeModel)
         {
             string result = "";
             try
             {
-                SqlCommand sqlCommand = new SqlCommand("spAggregateFunctions", this.sqlConnection);
+                SqlCommand sqlCommand = new SqlCommand("spAggregateFunctionsAfterER", this.sqlConnection);
                 sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
                 //Sends params to procedure
                 sqlCommand.Parameters.AddWithValue("@Gender", employeeModel.Gender);
@@ -247,17 +214,18 @@ namespace Payroll_ADO
                         Console.WriteLine("Min Salary {0}", sqlDataReader[1]);
                         Console.WriteLine("Max Salary {0}", sqlDataReader[2]);
                         Console.WriteLine("Average Salary {0}", sqlDataReader[3]);
-                        Console.WriteLine("No of employess {0}",sqlDataReader[5]);
-                        result += sqlDataReader[4] + " " + sqlDataReader[0] + " " + sqlDataReader[1] + " " + sqlDataReader[2] + " " + sqlDataReader[3]+" "+sqlDataReader[5];
+                        Console.WriteLine("No of employess {0}", sqlDataReader[5]);
+                        result += sqlDataReader[4] + " " + sqlDataReader[0] + " " + sqlDataReader[1] + " " + sqlDataReader[2] + " " + sqlDataReader[3] + " " + sqlDataReader[5];
                     }
                 }
                 else
                 {
                     result = "empty";
                 }
-                    sqlDataReader.Close();
-                
-            }catch(Exception ex)
+                sqlDataReader.Close();
+
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -268,7 +236,5 @@ namespace Payroll_ADO
             return result;
 
         }
-        
-        
     }
 }
