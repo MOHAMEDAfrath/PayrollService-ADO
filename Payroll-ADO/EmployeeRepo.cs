@@ -103,7 +103,6 @@ namespace Payroll_ADO
             Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}", employeeModel.EmployeeId, employeeModel.EmployeeName, employeeModel.BasePay, employeeModel.startDate, employeeModel.Gender, employeeModel.PhoneNumber, employeeModel.EmployeeDepartment, employeeModel.Address, employeeModel.Deductions, employeeModel.TaxablePay, employeeModel.Tax, employeeModel.NetPay);
             return employeeModel;
         }
-
         public string UpdateEmployeeUsingStoredProcedure(EmployeeModel employeeModel)
         {
             string change = "Unsuccessful";
@@ -227,5 +226,48 @@ namespace Payroll_ADO
             return employees.Count;
 
         }
+        public string PerformAggregateFunctions(EmployeeModel employeeModel)
+        {
+            string result = "";
+            try
+            {
+                SqlCommand sqlCommand = new SqlCommand("spAggregateFunctions", this.sqlConnection);
+                sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                //Sends params to procedure
+                sqlCommand.Parameters.AddWithValue("@Gender", employeeModel.Gender);
+                sqlConnection.Open();
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                if (sqlDataReader.HasRows)
+                {
+
+                    while (sqlDataReader.Read())
+                    {
+                        Console.WriteLine("Grouped By Gender {0}", sqlDataReader[4]);
+                        Console.WriteLine("Total Salary {0}", sqlDataReader[0]);
+                        Console.WriteLine("Min Salary {0}", sqlDataReader[1]);
+                        Console.WriteLine("Max Salary {0}", sqlDataReader[2]);
+                        Console.WriteLine("Average Salary {0}", sqlDataReader[3]);
+                        Console.WriteLine("No of employess {0}",sqlDataReader[5]);
+                        result += sqlDataReader[4] + " " + sqlDataReader[0] + " " + sqlDataReader[1] + " " + sqlDataReader[2] + " " + sqlDataReader[3]+" "+sqlDataReader[5];
+                    }
+                }
+                else
+                {
+                    result = "empty";
+                }
+                    sqlDataReader.Close();
+                
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+            return result;
+
+        }
+        
     }
 }

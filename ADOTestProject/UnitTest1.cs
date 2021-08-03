@@ -69,5 +69,15 @@ namespace ADOTestProject
             int expected = 3;
             Assert.AreEqual(expected, actual);
         }
+        //Aggregate method for gender male
+        [TestMethod]
+        public void TestMethodForAggregate()
+        {
+            string expected = "M 2300500 650000 950500 766833 3";
+            EmployeeModel model = new EmployeeModel();
+            model.Gender = "M";
+            string actual = employeeRepo.PerformAggregateFunctions(model);
+            Assert.AreEqual(expected, actual);
+        }
     }
 }
