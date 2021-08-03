@@ -98,5 +98,42 @@ namespace Payroll_ADO
 
         }
 
+        public string UpdateEmployeeUsingStoredProcedure(EmployeeModel employeeModel)
+        {
+            string change = "Unsuccessful";
+            try
+            {
+                using (sqlConnection)
+                {
+                    //spUdpateEmployeeDetails is stored procedure
+                    SqlCommand sqlCommand = new SqlCommand("spUdpateEmployeeDetails", this.sqlConnection);
+                    sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    sqlCommand.Parameters.AddWithValue("@name", employeeModel.EmployeeName);
+                    sqlCommand.Parameters.AddWithValue("@Basic_Pay", employeeModel.BasePay);
+                    sqlCommand.Parameters.AddWithValue("@id", employeeModel.EmployeeId);
+                    sqlConnection.Open();
+                    //returns the number of rows updated
+                    int result = sqlCommand.ExecuteNonQuery();
+                    if (result != 0)
+                        change = "Updated";
+
+                    //close reader
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                //closes the connection
+                sqlConnection.Close();
+
+            }
+            return change;
+
+
+        }
     }
 }

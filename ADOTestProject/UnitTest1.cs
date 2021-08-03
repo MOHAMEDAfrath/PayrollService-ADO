@@ -12,6 +12,7 @@ namespace ADOTestProject
         {
             employeeRepo = new EmployeeRepo();   
         }
+        //TC for updation using query
         [TestMethod]
         public void TestMethodForUpdateUsingQuery()
         {
@@ -23,5 +24,18 @@ namespace ADOTestProject
             string expected = "success";
             Assert.AreEqual(expected, actual);
         }
+        //Test case for updation using StoredProcedure
+        [TestMethod]
+        public void TestMethodForUpdateUsingProcedure()
+        {
+            EmployeeModel model = new EmployeeModel();
+            model.EmployeeName = "Priya";
+            model.EmployeeId = 3;
+            model.BasePay = 300000;
+            string actual = employeeRepo.UpdateEmployeeUsingStoredProcedure(model);
+            string expected = "Updated";
+            Assert.AreEqual(expected, actual);
+        }
+
     }
 }
