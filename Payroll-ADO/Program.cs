@@ -8,10 +8,9 @@ namespace Payroll_ADO
         {
             EmployeeRepo employeeRepo = new EmployeeRepo();
             //EmployeeRepo employeeRepo1 = new EmployeeRepo();
-            //employeeRepo.GetAllEmployee();
-            EmployeeModel employeeModel = new EmployeeModel();
-            employeeModel.EmployeeName = "Priya";
-            employeeRepo.RetrieveDataBasedOnName(employeeModel);
+            employeeRepo.GetAllEmployee();
+            //EmployeeModel employeeModel = new EmployeeModel();
+            //employeeRepo.DataBasedOnDateRange();
         }
     }
 }

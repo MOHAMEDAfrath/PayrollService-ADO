@@ -61,5 +61,13 @@ namespace ADOTestProject
                 Assert.AreEqual("Object reference not set to an instance of an object.", ex.Message);
             }
         }
+        //TC to check employee between range from startdate to current
+        [TestMethod]
+        public void TestMethodToFindEmployeesBetweenRange()
+        {
+            int actual = employeeRepo.DataBasedOnDateRange();
+            int expected = 3;
+            Assert.AreEqual(expected, actual);
+        }
     }
 }
