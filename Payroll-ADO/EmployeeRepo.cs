@@ -173,7 +173,9 @@ namespace Payroll_ADO
                     }
                     
                 }
-            }catch(Exception ex)
+            }
+            //catch 
+            catch(Exception ex)
             {
                 throw ex;
             }
