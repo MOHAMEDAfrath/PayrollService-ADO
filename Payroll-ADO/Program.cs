@@ -7,13 +7,11 @@ namespace Payroll_ADO
         static void Main(string[] args)
         {
             EmployeeRepo employeeRepo = new EmployeeRepo();
-            EmployeeRepo employeeRepo1 = new EmployeeRepo();
-            employeeRepo.GetAllEmployee();
-            EmployeeModel model = new EmployeeModel();
-            model.EmployeeName = "Priya";
-            model.EmployeeId = 3;
-            model.BasePay = 300000;
-            employeeRepo1.UpdateEmployee(model);
+            //EmployeeRepo employeeRepo1 = new EmployeeRepo();
+            //employeeRepo.GetAllEmployee();
+            EmployeeModel employeeModel = new EmployeeModel();
+            employeeModel.EmployeeName = "Priya";
+            employeeRepo.RetrieveDataBasedOnName(employeeModel);
         }
     }
 }

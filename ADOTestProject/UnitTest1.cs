@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Payroll_ADO;
+using System;
 
 namespace ADOTestProject
 {
@@ -36,6 +37,29 @@ namespace ADOTestProject
             string expected = "Updated";
             Assert.AreEqual(expected, actual);
         }
-
+        //TC for valid result for retrieved data
+        [TestMethod]
+        public void TestMethodForSelectDataBasedOnName()
+        {
+            EmployeeModel model = new EmployeeModel();
+            model.EmployeeName = "Priya";
+            EmployeeModel actual = employeeRepo.RetrieveDataBasedOnName(model);
+            Assert.AreEqual(model.EmployeeName, actual.EmployeeName);
+        }
+        //Tc for invalid name
+        [TestMethod]
+        public void TestMethodForSelectDataForNullRecords()
+        {
+            try
+            {
+                EmployeeModel model = new EmployeeModel();
+                model.EmployeeName = "Priy";
+                employeeRepo.RetrieveDataBasedOnName(model);
+            }
+            catch(Exception ex)
+            {
+                Assert.AreEqual("Object reference not set to an instance of an object.", ex.Message);
+            }
+        }
     }
 }

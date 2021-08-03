@@ -107,7 +107,9 @@ namespace Payroll_ADO
                 {
                     //spUdpateEmployeeDetails is stored procedure
                     SqlCommand sqlCommand = new SqlCommand("spUdpateEmployeeDetails", this.sqlConnection);
+                    //setting command type as stored procedure
                     sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    //sending params 
                     sqlCommand.Parameters.AddWithValue("@name", employeeModel.EmployeeName);
                     sqlCommand.Parameters.AddWithValue("@Basic_Pay", employeeModel.BasePay);
                     sqlCommand.Parameters.AddWithValue("@id", employeeModel.EmployeeId);
@@ -132,8 +134,55 @@ namespace Payroll_ADO
 
             }
             return change;
+        }
+        public EmployeeModel RetrieveDataBasedOnName(EmployeeModel employeeModel)
+        {
+            try
+            {
+                using (this.sqlConnection)
+                {
+                    //spRetrieveDataBasedOnName is the stored procedure
+                    SqlCommand sqlCommand = new SqlCommand("spRetrieveDataBasedOnName",this.sqlConnection);
+                    sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    //Sends params to procedure
+                    sqlCommand.Parameters.AddWithValue("@name", employeeModel.EmployeeName);
+                    sqlConnection.Open();
+                    SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            employeeModel.EmployeeId = sqlDataReader.GetInt32(0);
+                            employeeModel.EmployeeName = sqlDataReader.GetString(1);
+                            employeeModel.BasePay = sqlDataReader.GetDouble(2);
+                            employeeModel.startDate = sqlDataReader.GetDateTime(3);
+                            employeeModel.Gender = sqlDataReader.GetString(4);
+                            employeeModel.PhoneNumber = Convert.ToString(sqlDataReader.GetInt64(5));
+                            employeeModel.EmployeeDepartment = sqlDataReader.GetString(6);
+                            employeeModel.Address = sqlDataReader.GetString(7);
+                            employeeModel.Deductions = sqlDataReader.GetDouble(8);
+                            employeeModel.TaxablePay = sqlDataReader.GetDouble(9);
+                            employeeModel.Tax = sqlDataReader.GetDouble(10);
+                            employeeModel.NetPay = sqlDataReader.GetDouble(11);
+                        }
+                    }
+                    else
+                    {
+                        //if no result present
+                        return null;
+                    }
+                    
+                }
+            }catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
 
-
+            return employeeModel;
         }
     }
 }
