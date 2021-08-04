@@ -23,7 +23,7 @@ namespace Payroll_ADO
                 using (sqlConnection)
                 {
                     //query execution
-                    string query = @"select company.company_Id ,company.company_name,EmployeeId,EmployeeName,Gender,EmployeePhoneNumber,EmployeeAddress,StartDate,payroll.BasicPay,TaxablePay,IncomeTax,Deductions,NetPay,department_table.DeptName from Employee inner join company on company.company_Id = Employee.CompanyId inner join payroll on payroll.EmpId = Employee.EmployeeId inner join emp_Dept on Employee.EmployeeId = emp_Dept.EmpId inner join department_table on department_table.DeptId = emp_Dept.DeptId";
+                    string query = @"select company.company_Id ,company.company_name,EmployeeId,EmployeeName,Gender,EmployeePhoneNumber,EmployeeAddress,StartDate,IsActive,payroll.BasicPay,TaxablePay,IncomeTax,Deductions,NetPay,department_table.DeptName from Employee inner join company on company.company_Id = Employee.CompanyId inner join payroll on payroll.EmpId = Employee.EmployeeId inner join emp_Dept on Employee.EmployeeId = emp_Dept.EmpId inner join department_table on department_table.DeptId = emp_Dept.DeptId ";
                     SqlCommand command = new SqlCommand(query, this.sqlConnection);
                     //open sql connection
                     sqlConnection.Open();
@@ -66,13 +66,14 @@ namespace Payroll_ADO
             eREmployeeModel.PhoneNumber = Convert.ToString(sqlDataReader["EmployeePhoneNumber"]);
             eREmployeeModel.Address = Convert.ToString(sqlDataReader["EmployeeAddress"]);
             eREmployeeModel.startDate = sqlDataReader.GetDateTime(7);
+            eREmployeeModel.IsActive = Convert.ToInt32(sqlDataReader["IsActive"]);
             eREmployeeModel.BasePay = Convert.ToDouble(sqlDataReader["BasicPay"]);
             eREmployeeModel.TaxablePay = Convert.ToDouble(sqlDataReader["TaxablePay"]);
             eREmployeeModel.Tax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
             eREmployeeModel.Deductions = Convert.ToDouble(sqlDataReader["Deductions"]);
             eREmployeeModel.NetPay = Convert.ToDouble(sqlDataReader["NetPay"]);
             eREmployeeModel.DepartmentName = Convert.ToString(sqlDataReader["DeptName"]);
-            Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13}",eREmployeeModel.CompanyId,eREmployeeModel.CompanyName,eREmployeeModel.EmployeeId,eREmployeeModel.EmployeeName,eREmployeeModel.Gender,eREmployeeModel.PhoneNumber,eREmployeeModel.Address,eREmployeeModel.startDate,eREmployeeModel.BasePay,eREmployeeModel.TaxablePay,eREmployeeModel.Tax,eREmployeeModel.Deductions,eREmployeeModel.NetPay,eREmployeeModel.DepartmentName);
+            Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9} | {10} | {11} | {12} | {13} | {14}",eREmployeeModel.CompanyId,eREmployeeModel.CompanyName,eREmployeeModel.EmployeeId,eREmployeeModel.EmployeeName,eREmployeeModel.Gender,eREmployeeModel.PhoneNumber,eREmployeeModel.Address,eREmployeeModel.startDate,eREmployeeModel.IsActive,eREmployeeModel.BasePay,eREmployeeModel.TaxablePay,eREmployeeModel.Tax,eREmployeeModel.Deductions,eREmployeeModel.NetPay,eREmployeeModel.DepartmentName);
 
             return eREmployeeModel;
             
@@ -237,5 +238,7 @@ namespace Payroll_ADO
             return result;
 
         }
+
+        
     }
 }

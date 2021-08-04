@@ -8,6 +8,9 @@ namespace Payroll_ADO
         {
             TransactionQuery transaction = new TransactionQuery();
             transaction.InsertIntoTables();
+            TransactionQuery transaction1 = new TransactionQuery();
+            transaction1.CascadingDelete();
+            //transaction.AuditPurpose(3);
         }
     }
 }

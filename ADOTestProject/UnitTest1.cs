@@ -9,11 +9,13 @@ namespace ADOTestProject
     {
         EmployeeRepo employeeRepo;
         EntityRelationshipTable entityRelationshipTable;
+        TransactionQuery transactionQuery;
         [TestInitialize]
         public void SetUp() 
         {
             employeeRepo = new EmployeeRepo();
             entityRelationshipTable = new EntityRelationshipTable();
+            transactionQuery = new TransactionQuery();
         }
         //TC for updation using query
         [TestMethod]
@@ -64,7 +66,7 @@ namespace ADOTestProject
         public void TestMethodToFindEmployeesBetweenRange()
         {
             int actual = employeeRepo.DataBasedOnDateRange();
-            int expected = 3;
+            int expected =3 ;
             Assert.AreEqual(expected, actual);
         }
         //Aggregate method for gender male
@@ -82,7 +84,7 @@ namespace ADOTestProject
         [TestMethod]
         public void TestMethodForCheckingPayrollList()
         {
-            int expected = 5;
+            int expected = 6;
             int actual = entityRelationshipTable.GetEmployeeDetails();
             Assert.AreEqual(expected, actual);
         }
@@ -112,16 +114,61 @@ namespace ADOTestProject
         public void TestMethodToRetrieveDataBetweenRange_AfterER()
         {
             int actual = entityRelationshipTable.DataBasedOnDateRange();
-            int expected = 3;
+            int expected = 4;
             Assert.AreEqual(expected, actual);
         }
         [TestMethod]
         public void TestMethodAggregateFunctionsAfterER()
         {
-            string expected = "M 2300500 650000 950500 766833 3";
+            string expected = "M 2800500 500000 950500 700125 4";
             EREmployeeModel model = new EREmployeeModel();
             model.Gender = "M";
             string actual = entityRelationshipTable.PerformAggregateFunctions(model);
+            Assert.AreEqual(expected, actual);
+
+        }
+        ///Transaction Query////
+        ///checks insert
+        [TestMethod]
+        public void TestMethodTransactionInsert()
+        {
+            string actual = transactionQuery.InsertIntoTables();
+            string expected = "All transaction are updated";
+            Assert.AreEqual(expected,actual);
+        }
+        //Transaction query for cascading delete
+        [TestMethod]
+        public void TestMethodTransactionDelete()
+        {
+            string actual = transactionQuery.CascadingDelete();
+            string expected = "All transactions are updated";
+            Assert.AreEqual(expected, actual);
+        }
+        //checks the retrieval using join
+        [TestMethod]
+        public void TestMethodForCheckingPayrollListAfterER_IsActive()
+        {
+            TransactionQuery query = new TransactionQuery();
+            query.AuditPurpose(1);
+            int expected = 5;
+            int actual = transactionQuery.GetEmployeeDetails();
+            Assert.AreEqual(expected, actual);
+        }
+        //retrieve data betwwen joining date and current 
+        [TestMethod]
+        public void TestMethodToRetrieveDataBetweenRange_AfterER_IsActive()
+        {
+            int actual = transactionQuery.DataBasedOnDateRange();
+            int expected = 3;
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void TestMethodAggregateFunctionsAfterER_IsActive()
+        {
+            string expected = "M 2150500 500000 950500 716833 3";
+            EREmployeeModel model = new EREmployeeModel();
+            model.Gender = "M";
+            string actual = transactionQuery.PerformAggregateFunctions(model);
             Assert.AreEqual(expected, actual);
 
         }

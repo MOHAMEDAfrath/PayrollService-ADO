@@ -22,6 +22,7 @@ namespace Payroll_ADO
         public double Tax { get; set; }
         public double NetPay { get; set; }
         public string DepartmentName { get; set; }
+        public int IsActive { get; set; }
 
     }
 }
