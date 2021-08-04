@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Payroll_ADO
 {
+    //Tables after ER are employee ,company,payroll,dept table and emp_dept
     public class EntityRelationshipTable
     {
         public static string connectionString = @"Server=.;Database=payroll_service;Trusted_Connection=True;";
