@@ -169,8 +169,10 @@ namespace Payroll_ADO
                     {
                         while (sqlDataReader.Read())
                         {
+                            Console.WriteLine("Adding "+sqlDataReader["EmployeeName"]);
                             eREmployeeModel = GetDetail(sqlDataReader);
                             employeepayroll.Add(eREmployeeModel);
+                            Console.WriteLine("Added " + sqlDataReader["EmployeeName"]);
                         }
 
                     }
@@ -280,9 +282,6 @@ namespace Payroll_ADO
             return result;
 
         }
-        public void WithoutThread()
-        {
-            GetEmployeeDetails();
-        }
+      
     }
 }

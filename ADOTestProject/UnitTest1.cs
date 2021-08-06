@@ -179,7 +179,7 @@ namespace ADOTestProject
         {
             Stopwatch start = new Stopwatch();
             start.Start();
-            transactionQuery.WithoutThread();
+            transactionQuery.GetEmployeeDetails();
             start.Stop();
             Console.WriteLine("Without thread "+start.Elapsed.TotalSeconds);
 
