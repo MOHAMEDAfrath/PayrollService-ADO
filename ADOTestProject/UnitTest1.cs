@@ -133,12 +133,8 @@ namespace ADOTestProject
         [TestMethod]
         public void TestMethodTransactionInsert()
         {
-            //without thread
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
+            
             string actual = transactionQuery.InsertIntoTables();
-            stopWatch.Stop();
-            Console.WriteLine("Duration Without thread "+stopWatch.Elapsed.TotalSeconds);
             string expected = "All transaction are updated";
             Assert.AreEqual(expected,actual);
         }
@@ -176,6 +172,16 @@ namespace ADOTestProject
             model.Gender = "M";
             string actual = transactionQuery.PerformAggregateFunctions(model);
             Assert.AreEqual(expected, actual);
+
+        }
+        [TestMethod]
+        public void WithoutThread()
+        {
+            Stopwatch start = new Stopwatch();
+            start.Start();
+            transactionQuery.WithoutThread();
+            start.Stop();
+            Console.WriteLine("Without thread "+start.Elapsed.TotalSeconds);
 
         }
 

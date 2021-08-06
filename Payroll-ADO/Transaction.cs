@@ -280,5 +280,9 @@ namespace Payroll_ADO
             return result;
 
         }
+        public void WithoutThread()
+        {
+            GetEmployeeDetails();
+        }
     }
 }
