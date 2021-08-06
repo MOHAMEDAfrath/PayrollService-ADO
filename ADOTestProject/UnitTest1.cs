@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Payroll_ADO;
 using System;
+using System.Diagnostics;
 
 namespace ADOTestProject
 {
@@ -132,7 +133,12 @@ namespace ADOTestProject
         [TestMethod]
         public void TestMethodTransactionInsert()
         {
+            //without thread
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             string actual = transactionQuery.InsertIntoTables();
+            stopWatch.Stop();
+            Console.WriteLine("Duration Without thread "+stopWatch.Elapsed.TotalSeconds);
             string expected = "All transaction are updated";
             Assert.AreEqual(expected,actual);
         }

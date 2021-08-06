@@ -6,10 +6,12 @@ namespace Payroll_ADO
     {
         static void Main(string[] args)
         {
+
             TransactionQuery transaction = new TransactionQuery();
-            transaction.InsertIntoTables();
-            TransactionQuery transaction1 = new TransactionQuery();
-            transaction1.CascadingDelete();
+            transaction.GetEmployeeDetails();
+            //transaction.InsertIntoTables();
+            //TransactionQuery transaction1 = new TransactionQuery();
+            //transaction1.CascadingDelete();
             //transaction.AuditPurpose(3);
         }
     }
