@@ -164,18 +164,77 @@ namespace Payroll_ADO
                     //open sql connection
                     sqlConnection.Open();
                     //sql reader to read data from db
+
                     SqlDataReader sqlDataReader = command.ExecuteReader();
                     if (sqlDataReader.HasRows)
                     {
                         while (sqlDataReader.Read())
                         {
                             eREmployeeModel = GetDetail(sqlDataReader);
+                            Console.WriteLine("Adding "+eREmployeeModel.EmployeeName);
                             employeepayroll.Add(eREmployeeModel);
+                            Console.WriteLine("Added " +eREmployeeModel.EmployeeName);
+
                         }
 
                     }
-                    //close reader
                     sqlDataReader.Close();
+
+                    //close reader
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+
+                sqlConnection.Close();
+            }
+            return employeepayroll.Count;
+        }
+        public int GetEmployeeDetailsWithThread()
+        {
+            List<EREmployeeModel> employeepayroll = new List<EREmployeeModel>();
+            EREmployeeModel eREmployeeModel = new EREmployeeModel();
+            try
+            {
+                //Employee Model object 
+                using (sqlConnection)
+                {
+                    //query execution
+                    string query = @"select company.company_Id ,company.company_name,EmployeeId,EmployeeName,Gender,EmployeePhoneNumber,EmployeeAddress,StartDate,IsActive,payroll.BasicPay,TaxablePay,IncomeTax,Deductions,NetPay,department_table.DeptName from Employee inner join company on company.company_Id = Employee.CompanyId inner join payroll on payroll.EmpId = Employee.EmployeeId inner join emp_Dept on Employee.EmployeeId = emp_Dept.EmpId inner join department_table on department_table.DeptId = emp_Dept.DeptId where Employee.IsActive = 1";
+                    SqlCommand command = new SqlCommand(query, this.sqlConnection);
+                    //open sql connection
+                    sqlConnection.Open();
+                    //sql reader to read data from db
+                        SqlDataReader sqlDataReader = command.ExecuteReader();
+                        if (sqlDataReader.HasRows)
+                        {
+
+                        while (sqlDataReader.Read())
+                        {
+                            eREmployeeModel = GetDetail(sqlDataReader);
+                            //creating thread
+                            Task thread = new Task(() =>
+                            {
+                                Console.WriteLine("Adding"+eREmployeeModel.EmployeeName);
+                                employeepayroll.Add(eREmployeeModel);
+                                Console.WriteLine("Added "+eREmployeeModel.EmployeeName);
+                               
+                            });
+                            //starting thread
+                            thread.Start();
+                         }
+
+                        }
+                    sqlDataReader.Close();
+
+                    //close reader
+
                 }
 
             }

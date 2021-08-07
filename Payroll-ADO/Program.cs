@@ -8,7 +8,7 @@ namespace Payroll_ADO
         {
 
             TransactionQuery transaction = new TransactionQuery();
-            transaction.GetEmployeeDetails();
+            transaction.GetEmployeeDetailsWithThread();
             //transaction.InsertIntoTables();
             //TransactionQuery transaction1 = new TransactionQuery();
             //transaction1.CascadingDelete();

@@ -178,6 +178,27 @@ namespace ADOTestProject
             Assert.AreEqual(expected, actual);
 
         }
+        [TestMethod]
+        public void WithoutThread()
+        {
+            Stopwatch start = new Stopwatch();
+            start.Start();
+            transactionQuery.GetEmployeeDetails();
+            start.Stop();
+            Console.WriteLine("Without thread " + start.Elapsed.TotalSeconds);
+
+        }
+       [TestMethod]
+        public void WithThread()
+        {
+            TransactionQuery tq = new TransactionQuery();
+            Stopwatch start = new Stopwatch();
+            start.Start();
+            tq.GetEmployeeDetailsWithThread();
+            start.Stop();
+            Console.WriteLine("With thread " + start.Elapsed.TotalSeconds);
+
+        }
 
 
     }
