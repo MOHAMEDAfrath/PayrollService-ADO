@@ -221,9 +221,12 @@ namespace Payroll_ADO
                             //creating thread
                             Task thread = new Task(() =>
                             {
-                                Console.WriteLine("Adding"+eREmployeeModel.EmployeeName);
-                                employeepayroll.Add(eREmployeeModel);
-                                Console.WriteLine("Added "+eREmployeeModel.EmployeeName);
+                                lock (this)
+                                {
+                                    Console.WriteLine("Adding" + eREmployeeModel.EmployeeName);
+                                    employeepayroll.Add(eREmployeeModel);
+                                    Console.WriteLine("Added " + eREmployeeModel.EmployeeName);
+                                }
                                
                             });
                             //starting thread

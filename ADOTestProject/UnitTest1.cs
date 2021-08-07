@@ -188,6 +188,7 @@ namespace ADOTestProject
             Console.WriteLine("Without thread " + start.Elapsed.TotalSeconds);
 
         }
+        //with thread along with lock
        [TestMethod]
         public void WithThread()
         {
